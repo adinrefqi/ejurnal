@@ -1,0 +1,16 @@
+{
+    "name": "e-Jurnal Ibadah SMP THHK",
+    "short_name": "e-Jurnal",
+    "start_url": "./index.html",
+    "display": "standalone",
+    "background_color": "#F8FAFC",
+    "theme_color": "#10B981",
+    "orientation": "portrait",
+    "icons": [
+        {
+            "src": "https://cdn-icons-png.flaticon.com/512/2884/2884394.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}

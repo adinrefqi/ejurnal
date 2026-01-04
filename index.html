@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>e-Jurnal Ibadah SMP THHK</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Supabase Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#10B981">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+</head>
+
+<body>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="toast hidden">
+        <i class="fas fa-check-circle"></i>
+        <span id="toast-message">Berhasil disimpan</span>
+    </div>
+
+    <!-- Login View -->
+    <section id="login-view" class="view active">
+        <div class="login-container">
+            <div class="logo-area">
+                <div class="logo-icon">
+                    <i class="fas fa-quran"></i>
+                </div>
+                <h1>e-Jurnal Ibadah</h1>
+                <p>SMP Tunas Hidup Harapan Kita</p>
+            </div>
+
+            <div class="login-card">
+                <div class="login-tabs">
+                    <button class="tab-btn active" onclick="switchLoginTab('student')">Siswa</button>
+                    <button class="tab-btn" onclick="switchLoginTab('teacher')">Guru</button>
+                </div>
+
+                <!-- Student Login Form -->
+                <form id="student-login-form" class="login-form active" onsubmit="handleLogin(event, 'student')">
+                    <div class="input-group">
+                        <i class="fas fa-user-graduate"></i>
+                        <input type="text" id="student-nisn" placeholder="NISN atau Email" required>
+                    </div>
+                    <button type="submit" class="btn-primary">Masuk Sebagai Siswa</button>
+                </form>
+
+                <!-- Teacher Login Form -->
+                <form id="teacher-login-form" class="login-form" onsubmit="handleLogin(event, 'teacher')">
+                    <div class="input-group">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                        <input type="text" id="teacher-id" placeholder="ID Guru / Email" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="teacher-password" placeholder="Password" required>
+                    </div>
+                    <button type="submit" class="btn-primary">Masuk Sebagai Guru</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- App Layout (Hidden by default) -->
+    <div id="app-layout" class="hidden">
+
+        <!-- Bottom Navigation (Mobile) -->
+        <nav class="bottom-nav">
+            <button class="nav-item active" onclick="navigateTo('dashboard')">
+                <i class="fas fa-home"></i>
+                <span>Beranda</span>
+            </button>
+            <button class="nav-item" onclick="navigateTo('sholat')">
+                <i class="fas fa-praying-hands"></i>
+                <span>Salat</span>
+            </button>
+            <button class="nav-item" onclick="navigateTo('tadarus')">
+                <i class="fas fa-book-open"></i>
+                <span>Tadarus</span>
+            </button>
+            <button class="nav-item" onclick="navigateTo('profile')">
+                <i class="fas fa-user"></i>
+                <span>Akun</span>
+            </button>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main id="main-content">
+
+            <!-- Header -->
+            <header class="app-header">
+                <div class="user-info">
+                    <div class="avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="text">
+                        <small>Assalamualaikum,</small>
+                        <h3 id="user-name-display">Nama Siswa</h3>
+                    </div>
+                </div>
+                <button class="logout-btn" onclick="handleLogout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </header>
+
+            <!-- Student Dashboard -->
+            <section id="student-dashboard" class="content-view">
+                <div class="summary-cards">
+                    <div class="card highlight">
+                        <div class="card-icon"><i class="fas fa-check-double"></i></div>
+                        <div class="card-info">
+                            <span class="label">Salat Hari Ini</span>
+                            <h2 id="today-sholat-count">0/5</h2>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon"><i class="fas fa-star"></i></div>
+                        <div class="card-info">
+                            <span class="label">Poin Ibadah</span>
+                            <h2>125</h2>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-title">
+                    <h3>Menu Ibadah</h3>
+                </div>
+
+                <div class="menu-grid">
+                    <div class="menu-item" onclick="navigateTo('sholat')">
+                        <div class="icon-box green"><i class="fas fa-mosque"></i></div>
+                        <span>Jurnal Salat</span>
+                    </div>
+                    <div class="menu-item" onclick="navigateTo('tadarus')">
+                        <div class="icon-box blue"><i class="fas fa-quran"></i></div>
+                        <span>Tadarus</span>
+                    </div>
+                    <div class="menu-item" onclick="navigateTo('hafalan')">
+                        <div class="icon-box purple"><i class="fas fa-brain"></i></div>
+                        <span>Hafalan</span>
+                    </div>
+                    <div class="menu-item" onclick="navigateTo('history')">
+                        <div class="icon-box orange"><i class="fas fa-history"></i></div>
+                        <span>Riwayat</span>
+                    </div>
+                </div>
+
+                <div class="quote-card">
+                    <p>"Sesungguhnya salat itu mencegah dari (perbuatan-perbuatan) keji dan mungkar."</p>
+                    <small>QS. Al-Ankabut: 45</small>
+                </div>
+            </section>
+
+            <!-- Teacher Dashboard -->
+            <section id="teacher-dashboard" class="content-view hidden">
+                <div class="dashboard-header">
+                    <h2>Dashboard Guru PAI</h2>
+                    <p>Monitoring ibadah siswa</p>
+                </div>
+
+                <div class="monitor-stats">
+                    <div class="stat-card">
+                        <h5>Total Siswa</h5>
+                        <h3>120</h3>
+                    </div>
+                    <div class="stat-card">
+                        <h5>Mengisi Jurnal</h5>
+                        <h3 class="success">85%</h3>
+                    </div>
+                </div>
+
+                <div class="class-selector">
+                    <label>Pilih Kelas</label>
+                    <select id="teacher-class-select" onchange="loadClassData()">
+                        <option value="7A">Kelas 7A</option>
+                        <option value="7B">Kelas 7B</option>
+                        <option value="8A">Kelas 8A</option>
+                        <option value="9A">Kelas 9A</option>
+                    </select>
+                </div>
+
+                <div class="section-title">
+                    <h3>Daftar Siswa</h3>
+                </div>
+
+                <div class="student-list" id="teacher-student-list">
+                    <!-- Javascript will populate this -->
+                </div>
+            </section>
+
+            <!-- Jurnal Salat View -->
+            <section id="sholat-view" class="content-view hidden">
+                <div class="page-header">
+                    <button class="back-btn" onclick="navigateTo('dashboard')"><i
+                            class="fas fa-arrow-left"></i></button>
+                    <h2>Jurnal Salat Wajib</h2>
+                </div>
+
+                <div class="date-display">
+                    <i class="far fa-calendar-alt"></i>
+                    <span id="current-date-display">Minggu, 4 Januari 2026</span>
+                </div>
+
+                <form id="sholat-form" class="checklist-form">
+                    <div class="checklist-item">
+                        <div class="check-label">
+                            <span class="prayer-name">Subuh</span>
+                            <span class="prayer-time">04:30</span>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" name="sholat" value="subuh" onchange="saveSholat(this)">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="checklist-item">
+                        <div class="check-label">
+                            <span class="prayer-name">Zuhur</span>
+                            <span class="prayer-time">12:00</span>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" name="sholat" value="zuhur" onchange="saveSholat(this)">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="checklist-item">
+                        <div class="check-label">
+                            <span class="prayer-name">Asar</span>
+                            <span class="prayer-time">15:15</span>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" name="sholat" value="asar" onchange="saveSholat(this)">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="checklist-item">
+                        <div class="check-label">
+                            <span class="prayer-name">Magrib</span>
+                            <span class="prayer-time">18:00</span>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" name="sholat" value="magrib" onchange="saveSholat(this)">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="checklist-item">
+                        <div class="check-label">
+                            <span class="prayer-name">Isya</span>
+                            <span class="prayer-time">19:15</span>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" name="sholat" value="isya" onchange="saveSholat(this)">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Jurnal Tadarus View -->
+            <section id="tadarus-view" class="content-view hidden">
+                <div class="page-header">
+                    <button class="back-btn" onclick="navigateTo('dashboard')"><i
+                            class="fas fa-arrow-left"></i></button>
+                    <h2>Lapor Tadarus</h2>
+                </div>
+
+                <div class="form-container">
+                    <form id="tadarus-form" onsubmit="handleTadarusSubmit(event)">
+                        <div class="form-group">
+                            <label>Tanggal</label>
+                            <input type="date" id="tadarus-date" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Nama Surah</label>
+                            <input type="text" id="tadarus-surah" placeholder="Contoh: Al-Mulk" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Ayat (Opsional)</label>
+                            <input type="text" id="tadarus-ayat" placeholder="Contoh: 1-10">
+                        </div>
+                        <div class="form-group">
+                            <label>Durasi Membaca</label>
+                            <div class="duration-options">
+                                <input type="radio" name="duration" id="d5" value="5" class="hidden-radio" checked>
+                                <label for="d5" class="radio-chip">5 Menit</label>
+
+                                <input type="radio" name="duration" id="d10" value="10" class="hidden-radio">
+                                <label for="d10" class="radio-chip">10 Menit</label>
+
+                                <input type="radio" name="duration" id="d15" value="15" class="hidden-radio">
+                                <label for="d15" class="radio-chip">15 Menit</label>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-primary full-width">Simpan Laporan</button>
+                    </form>
+
+                    <div class="history-list mt-4">
+                        <h4>Riwayat Terakhir</h4>
+                        <div id="tadarus-history">
+                            <!-- JS populated -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Hafalan View -->
+            <section id="hafalan-view" class="content-view hidden">
+                <div class="page-header">
+                    <button class="back-btn" onclick="navigateTo('dashboard')"><i
+                            class="fas fa-arrow-left"></i></button>
+                    <h2>Setoran Hafalan</h2>
+                </div>
+
+                <div class="hafalan-tabs">
+                    <button class="h-tab active" onclick="switchHafalanTab('juz30')">Juz 30</button>
+                    <button class="h-tab" onclick="switchHafalanTab('iqra')">Iqra'</button>
+                    <button class="h-tab" onclick="switchHafalanTab('bacaan')">Bacaan Salat</button>
+                </div>
+
+                <!-- Juz 30 Tab -->
+                <div id="h-tab-juz30" class="h-content active">
+                    <div class="hafalan-list" id="juz30-list">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Iqra Tab -->
+                <div id="h-tab-iqra" class="h-content">
+                    <div class="card p-3">
+                        <h3>Pencapaian Iqra'</h3>
+                        <div class="iqra-status">
+                            <div class="current-level">
+                                <span>Jilid Saat Ini</span>
+                                <h1 id="iqra-volume">4</h1>
+                            </div>
+                            <div class="current-page">
+                                <span>Halaman</span>
+                                <h1 id="iqra-page">12</h1>
+                            </div>
+                        </div>
+                        <p class="text-muted text-center text-sm">Update terakhir oleh Guru pada 2 Jan 2026</p>
+                    </div>
+                </div>
+
+                <!-- Bacaan Salat Tab -->
+                <div id="h-tab-bacaan" class="h-content">
+                    <div class="hafalan-list" id="bacaan-list">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- Profile/Settings View -->
+            <section id="profile-view" class="content-view hidden">
+                <div class="profile-header">
+                    <div class="profile-avatar large">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <h2 id="profile-name">Nama Siswa</h2>
+                    <p id="profile-role">Siswa Kelas 7A</p>
+                </div>
+
+                <div class="profile-menu">
+                    <div class="menu-list">
+                        <div class="list-item">
+                            <i class="fas fa-user-edit"></i>
+                            <span>Edit Profil</span>
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                        <div class="list-item">
+                            <i class="fas fa-lock"></i>
+                            <span>Ganti Password</span>
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                        <div class="list-item text-red" onclick="handleLogout()">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Keluar Aplikasi</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

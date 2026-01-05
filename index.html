@@ -15,8 +15,8 @@
     <!-- Styles -->
     <link rel="stylesheet" href="style.css">
 
-    <!-- Supabase Client -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Supabase Client (Specific Version) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.7/dist/umd/supabase.min.js"></script>
 
     <!-- PWA Manifest -->
     <link rel="manifest" href="manifest.json">
@@ -128,12 +128,27 @@
                         </div>
                     </div>
                     <div class="card">
-                        <div class="card-icon"><i class="fas fa-star"></i></div>
+                        <div class="card-icon"><i class="fas fa-chart-line"></i></div>
                         <div class="card-info">
-                            <span class="label">Poin Ibadah</span>
-                            <h2>125</h2>
+                            <span class="label">Performa Bulan Ini</span>
+                            <div style="display:flex; align-items:baseline; gap:5px;">
+                                <h2 id="monthly-percentage">0%</h2>
+                                <small id="exam-status"
+                                    style="font-size:0.65rem; padding:2px 6px; border-radius:4px; background:#eee;">Menghitung...</small>
+                            </div>
                         </div>
                     </div>
+                </div>
+
+                <!-- Info Syarat Ujian -->
+                <div class="info-alert"
+                    style="background:#F0FDF4; border:1px solid #BBF7D0; padding:10px; border-radius:8px; margin-bottom:20px; font-size:0.85rem; color:#166534; display:flex; gap:10px; align-items:center;">
+                    <i class="fas fa-info-circle" style="font-size:1.2rem;"></i>
+                    <span>
+                        <strong>Syarat Ujian:</strong> Ketercapaian minimal <strong>75%</strong> untuk dapat mengikuti
+                        ujian
+                        semester.
+                    </span>
                 </div>
 
                 <div class="section-title">
@@ -175,11 +190,7 @@
                 <div class="monitor-stats">
                     <div class="stat-card">
                         <h5>Total Siswa</h5>
-                        <h3>120</h3>
-                    </div>
-                    <div class="stat-card">
-                        <h5>Mengisi Jurnal</h5>
-                        <h3 class="success">85%</h3>
+                        <h3 id="teacher-total-students">0</h3>
                     </div>
                 </div>
 
@@ -199,6 +210,52 @@
 
                 <div class="student-list" id="teacher-student-list">
                     <!-- Javascript will populate this -->
+                </div>
+            </section>
+
+            <!-- Teacher: Student Detail View -->
+            <section id="teacher-detail-view" class="content-view hidden">
+                <div class="page-header">
+                    <button class="back-btn" onclick="navigateTo('dashboard')"><i
+                            class="fas fa-arrow-left"></i></button>
+                    <div>
+                        <h2 id="detail-student-name">Nama Siswa</h2>
+                        <small id="detail-student-id">NISN</small>
+                    </div>
+                </div>
+
+                <div class="login-tabs" style="margin-top:0;">
+                    <button class="tab-btn active" onclick="switchDetailTab('d-sholat')">Jurnal Salat</button>
+                    <button class="tab-btn" onclick="switchDetailTab('d-tadarus')">Tadarus</button>
+                    <button class="tab-btn" onclick="switchDetailTab('d-hafalan')">Setor Hafalan</button>
+                </div>
+
+                <!-- Detail Salat -->
+                <div id="tab-d-sholat" class="detail-content active">
+                    <div class="card p-3 mb-3">
+                        <h4>Rekap 7 Hari Terakhir</h4>
+                        <div id="detail-sholat-list" class="mt-4">
+                            <p class="text-muted text-center">Memuat...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detail Tadarus -->
+                <div id="tab-d-tadarus" class="detail-content hidden">
+                    <div id="detail-tadarus-list">
+                        <!-- JS Populated -->
+                    </div>
+                </div>
+
+                <!-- Detail Hafalan (Input Guru) -->
+                <div id="tab-d-hafalan" class="detail-content hidden">
+                    <div class="hafalan-tabs">
+                        <button class="h-tab active" onclick="switchTeacherHafalanFilter('juz30')">Juz 30</button>
+                        <button class="h-tab" onclick="switchTeacherHafalanFilter('bacaan')">Bacaan</button>
+                    </div>
+                    <div id="detail-hafalan-list">
+                        <!-- JS Populated with Edit Buttons -->
+                    </div>
                 </div>
             </section>
 
@@ -266,6 +323,25 @@
                             <span class="slider"></span>
                         </label>
                     </div>
+                    <div class="checklist-item">
+                        <div class="check-label">
+                            <span class="prayer-name">Paraf Orang Tua</span>
+                            <span class="prayer-time">Validasi Harian</span>
+                        </div>
+                        <div id="sholat-valid-indicator" style="font-size: 0.8rem; color: #999;">Belum TTD</div>
+                    </div>
+
+                    <!-- Signature Pad -->
+                    <div class="signature-pad-container">
+                        <label>Tanda Tangan Orang Tua</label>
+                        <canvas id="sig-canvas-sholat" class="signature-pad"></canvas>
+                        <div class="signature-actions">
+                            <button type="button" class="btn-clear" onclick="clearSignature('sholat')">Hapus /
+                                Ulangi</button>
+                        </div>
+                        <button type="button" onclick="saveSholatSignature()" class="btn-primary full-width"
+                            style="margin-top:10px; font-size:0.9rem;">Simpan Validasi & Tanda Tangan</button>
+                    </div>
                 </form>
             </section>
 
@@ -303,8 +379,18 @@
                                 <input type="radio" name="duration" id="d15" value="15" class="hidden-radio">
                                 <label for="d15" class="radio-chip">15 Menit</label>
                             </div>
-                        </div>
-                        <button type="submit" class="btn-primary full-width">Simpan Laporan</button>
+                            <!-- Signature Pad -->
+                            <div class="signature-pad-container">
+                                <label>Tanda Tangan Orang Tua</label>
+                                <canvas id="sig-canvas-tadarus" class="signature-pad"></canvas>
+                                <div class="signature-actions">
+                                    <button type="button" class="btn-clear" onclick="clearSignature('tadarus')">Hapus /
+                                        Ulangi</button>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn-primary full-width" style="margin-top:10px;">Simpan
+                                Laporan</button>
                     </form>
 
                     <div class="history-list mt-4">

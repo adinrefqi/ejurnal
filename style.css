@@ -746,3 +746,105 @@ input:checked+.slider:before {
         /* Let it fill iframe/window if strictly web */
     }
 }
+/* DETAIL VIEW TABS */
+.detail-content { display: none; }
+.detail-content.active { display: block; }
+.card.p-3 { padding: 15px; }
+.card.mb-3 { margin-bottom: 15px; }
+
+/* TABLE FOR SHOLAT */
+.sholat-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+.sholat-table th, .sholat-table td {
+    padding: 8px;
+    text-align: center;
+    border-bottom: 1px solid #F1F5F9;
+}
+.sholat-table th { color: var(--text-muted); font-weight: 500; }
+.sholat-table .check-ok { color: var(--primary); }
+.sholat-table .check-no { color: #E5E7EB; }
+
+/* EDITABLE HAFALAN */
+.edit-hafalan-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background: white;
+    border-bottom: 1px solid #F1F5F9;
+}
+.edit-controls {
+    display: flex;
+    gap: 5px;
+}
+.status-btn {
+    border: 1px solid #E5E7EB;
+    background: white;
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    cursor: pointer;
+}
+.status-btn.active {
+    font-weight: 600;
+    border-color: transparent;
+}
+.status-btn.btn-belum.active { background: #FEE2E2; color: #B91C1C; }
+.status-btn.btn-ulang.active { background: #FEF3C7; color: #D97706; }
+.status-btn.btn-lancar.active { background: #D1FAE5; color: #059669; }
+
+
+/* Signature Canvas */
+.signature-pad-container {
+    border: 1px solid #E5E7EB;
+    border-radius: 8px;
+    background: #fff;
+    padding: 10px;
+    margin-top: 10px;
+}
+
+.signature-pad-container label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 0.85rem;
+    color: #6B7280;
+    font-weight: 500;
+}
+
+canvas.signature-pad {
+    border: 1px dashed #CBD5E1;
+    border-radius: 4px;
+    width: 100%;
+    height: 150px;
+    background: #FAFAFA;
+    touch-action: none; /* Important for preventing scrolling while drawing */
+    cursor: crosshair;
+}
+
+.signature-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 5px;
+}
+
+.btn-clear {
+    background: none;
+    border: none;
+    color: #EF4444;
+    font-size: 0.8rem;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+/* History Signature Image */
+.signature-thumb {
+    height: 40px;
+    border: 1px solid #eee;
+    margin-left: 10px;
+    background: white;
+    padding: 2px;
+}
+

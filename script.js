@@ -258,6 +258,88 @@ function navigateTo(viewId) {
 }
 
 // --- STUDENT FEATURES ---
+async function loadStudentDashboard() {
+    if (!supabase) return;
+
+    // 1. Get today's sholat count
+    const { data: todayData } = await supabase
+        .from('journal_sholat')
+        .select('*')
+        .eq('user_id', currentUser.id)
+        .eq('date', currentDate)
+        .single();
+
+    let todayCount = 0;
+    if (todayData) {
+        if (todayData.subuh) todayCount++;
+        if (todayData.zuhur) todayCount++;
+        if (todayData.asar) todayCount++;
+        if (todayData.magrib) todayCount++;
+        if (todayData.isya) todayCount++;
+    }
+    const todayEl = document.getElementById('today-sholat-count');
+    if (todayEl) todayEl.textContent = `${todayCount}/5`;
+
+    // 2. Calculate Monthly Percentage
+    calculateMonthlyStats();
+}
+
+async function calculateMonthlyStats() {
+    // Get first day of current month
+    const now = new Date();
+    const firstDay = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
+
+    const { data: monthLogs, error } = await supabase
+        .from('journal_sholat')
+        .select('*')
+        .eq('user_id', currentUser.id)
+        .gte('date', firstDay);
+
+    if (error) {
+        console.error('Stats Error', error);
+        return;
+    }
+
+    // Logic: 
+    // Total Possible Prayer Points = (Days passed so far) * 5.
+    // Score = (Sum of ticks) / Total Possible * 100.
+
+    const daysSoFar = now.getDate();
+    const totalPossible = daysSoFar * 5;
+
+    let totalScore = 0;
+    if (monthLogs) {
+        monthLogs.forEach(log => {
+            if (log.subuh) totalScore++;
+            if (log.zuhur) totalScore++;
+            if (log.asar) totalScore++;
+            if (log.magrib) totalScore++;
+            if (log.isya) totalScore++;
+        });
+    }
+
+    // Prevent division by zero
+    const percentage = totalPossible > 0 ? Math.round((totalScore / totalPossible) * 100) : 0;
+
+    // Update UI
+    const pctEl = document.getElementById('monthly-percentage');
+    const statusEl = document.getElementById('exam-status');
+
+    if (pctEl) pctEl.textContent = `${percentage}%`;
+
+    if (statusEl) {
+        if (percentage >= 75) {
+            statusEl.textContent = 'Boleh Ujian';
+            statusEl.style.background = '#DCFCE7'; // green
+            statusEl.style.color = '#166534';
+        } else {
+            statusEl.textContent = 'Belum Cukup';
+            statusEl.style.background = '#FEE2E2'; // red
+            statusEl.style.color = '#991B1B';
+        }
+    }
+}
+
 
 // --- SIGNATURE PAD UTILS ---
 const signatures = {
@@ -928,6 +1010,4 @@ function showToast(msg) {
     }, 2000);
 }
 
-function loadStudentDashboard() {
-    updateDashboardStats();
-}
+

@@ -782,37 +782,45 @@ async function loadDetailSholat() {
     }
 
     let html = `
-        <table class="sholat-table">
-            <thead>
-                <tr>
-                    <th>Tanggal</th>
-                    <th>Subuh</th>
-                    <th>Zuhur</th>
-                    <th>Asar</th>
-                    <th>Magrib</th>
-                    <th>Isya</th>
-                </tr>
-            </thead>
-            <tbody>
+        <div class="table-responsive">
+            <table class="sholat-table">
+                <thead>
+                    <tr>
+                        <th style="min-width:100px;">Tanggal</th>
+                        <th>Subuh</th>
+                        <th>Zuhur</th>
+                        <th>Asar</th>
+                        <th>Magrib</th>
+                        <th>Isya</th>
+                        <th>Validasi</th>
+                    </tr>
+                </thead>
+                <tbody>
     `;
 
     logs.forEach(log => {
         const d = new Date(log.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
-        const icon = (bool) => bool ? '<i class="fas fa-check-circle check-ok"></i>' : '<i class="fas fa-circle check-no"></i>';
+        const check = (val) => val ? '<i class="fas fa-check-circle check-ok"></i>' : '<i class="fas fa-minus-circle check-no"></i>';
+        const validIcon = log.parent_valid ? '<span style="color:#10B981; font-size:0.8rem;"><i class="fas fa-check"></i> OK</span>' : '<span style="color:#E5E7EB;">-</span>';
 
         html += `
             <tr>
                 <td>${d}</td>
-                <td>${icon(log.subuh)}</td>
-                <td>${icon(log.zuhur)}</td>
-                <td>${icon(log.asar)}</td>
-                <td>${icon(log.magrib)}</td>
-                <td>${icon(log.isya)}</td>
+                <td>${check(log.subuh)}</td>
+                <td>${check(log.zuhur)}</td>
+                <td>${check(log.asar)}</td>
+                <td>${check(log.magrib)}</td>
+                <td>${check(log.isya)}</td>
+                <td>${validIcon}</td>
             </tr>
         `;
     });
 
-    html += '</tbody></table>';
+    html += `
+                </tbody>
+            </table>
+        </div>
+    `;
     list.innerHTML = html;
 }
 

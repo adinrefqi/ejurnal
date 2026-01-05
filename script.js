@@ -749,21 +749,56 @@ async function loadTeacherDashboard() {
 
     document.getElementById('teacher-total-students').textContent = students.length;
 
-    // 2. Get Sholat Logs for Today
+    // 2. Get Sholat Logs for Today AND Monthly stats
     const studentIds = students.map(s => s.id);
-    const { data: logs } = await supabase
+
+    // Get Date boundaries
+    const now = new Date();
+    const firstDay = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
+
+    // Bulk fetch monthly logs for all students in this class
+    const { data: allLogs } = await supabase
         .from('journal_sholat')
         .select('*')
         .in('user_id', studentIds)
-        .eq('date', currentDate);
+        .gte('date', firstDay);
 
-    const logsMap = {};
-    if (logs) {
-        logs.forEach(log => logsMap[log.user_id] = log);
+    // Process logs
+    const todayMap = {};
+    const monthStats = {}; // { userId: percentage }
+
+    // Init stats for all students
+    const daysSoFar = now.getDate();
+    const totalPossible = daysSoFar * 5;
+
+    studentIds.forEach(id => {
+        monthStats[id] = 0; // total score
+    });
+
+    if (allLogs) {
+        allLogs.forEach(log => {
+            // Count score
+            let score = 0;
+            if (log.subuh) score++;
+            if (log.zuhur) score++;
+            if (log.asar) score++;
+            if (log.magrib) score++;
+            if (log.isya) score++;
+
+            if (monthStats[log.user_id] !== undefined) {
+                monthStats[log.user_id] += score;
+            }
+
+            // If today, also add to todayMap
+            if (log.date === currentDate) {
+                todayMap[log.user_id] = log;
+            }
+        });
     }
 
     listContainer.innerHTML = students.map(student => {
-        const log = logsMap[student.id] || {};
+        const log = todayMap[student.id] || {};
+        // Today count
         let count = 0;
         if (log.subuh) count++;
         if (log.zuhur) count++;
@@ -771,18 +806,31 @@ async function loadTeacherDashboard() {
         if (log.magrib) count++;
         if (log.isya) count++;
 
+        // Month Percentage
+        const totalScore = monthStats[student.id] || 0;
+        const percentage = totalPossible > 0 ? Math.round((totalScore / totalPossible) * 100) : 0;
+
+        let pctColor = '#F59E0B'; // yellow
+        if (percentage >= 75) pctColor = '#10B981'; // green
+        if (percentage < 50) pctColor = '#EF4444'; // red
+
         return `
             <div class="student-list-item" onclick="openStudentDetail('${student.id}')" style="cursor:pointer">
                 <div>
                     <strong>${student.name}</strong><br>
                     <small>NISN: ${student.id}</small>
                 </div>
-                <div class="text-center" style="display:flex; align-items:center; gap:10px;">
-                    <div>
-                        <span class="label" style="font-size:0.75rem; color:#6B7280">Salat Hari Ini</span>
-                        <h3 style="color: ${count === 5 ? '#10B981' : '#F59E0B'}">${count}/5</h3>
+                <div class="text-right" style="display:flex; align-items:center; gap:15px;">
+                    <div style="text-align:right;">
+                        <span class="label" style="font-size:0.65rem; color:#6B7280; display:block;">Bulan Ini</span>
+                        <strong style="color:${pctColor}; font-size:1.1rem;">${percentage}%</strong>
                     </div>
-                    <i class="fas fa-chevron-right text-muted"></i>
+                    <div style="width:1px; height:30px; background:#E5E7EB;"></div>
+                    <div style="text-align:right;">
+                        <span class="label" style="font-size:0.65rem; color:#6B7280; display:block;">Hari Ini</span>
+                        <h3 style="color: ${count === 5 ? '#10B981' : '#F59E0B'}; font-size:1.1rem; margin:0;">${count}/5</h3>
+                    </div>
+                    <i class="fas fa-chevron-right text-muted" style="margin-left:5px;"></i>
                 </div>
             </div>
         `;

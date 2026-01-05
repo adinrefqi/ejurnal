@@ -689,38 +689,80 @@ async function loadHafalanData() {
 
     // Juz 30 Render
     const juz30Container = document.getElementById('juz30-list');
-    juz30Container.innerHTML = INITIAL_HAFALAN_JUZ30.map(surah => {
-        const itemKey = `juz30_${surah.name}`; // using name as key to match logic
+    juz30Container.innerHTML = '<div class="hafalan-container">' + INITIAL_HAFALAN_JUZ30.map(surah => {
+        const itemKey = `juz30_${surah.name}`;
         const status = progressMap[itemKey] || 'Belum';
-        const colorClass = status === 'Lancar' ? 'status-lancar' : (status === 'Mengulang' ? 'status-mengulang' : 'status-belum');
+
+        let statusClass = 'belum';
+        let iconClass = 'fa-book-open';
+        let statusIcon = 'fa-circle'; // small dot
+
+        if (status === 'Lancar') {
+            statusClass = 'lancar';
+            iconClass = 'fa-check-circle';
+            statusIcon = 'fa-check';
+        } else if (status === 'Mengulang') {
+            statusClass = 'mengulang';
+            iconClass = 'fa-sync-alt';
+            statusIcon = 'fa-history';
+        }
 
         return `
-            <div class="hafalan-item">
-                <div class="hafalan-info">
+            <div class="hafalan-card">
+                <div class="hafalan-icon">
+                    <i class="fas ${iconClass}"></i>
+                </div>
+                <div class="hafalan-content">
                     <h4>${surah.name}</h4>
-                    <span class="${colorClass}">${status}</span>
+                    <span class="status-badge ${statusClass}">
+                        <i class="fas ${statusIcon}" style="font-size:0.7em"></i> ${status}
+                    </span>
                 </div>
             </div>
         `;
-    }).join('');
+    }).join('') + '</div>';
 
     // Bacaan Salat Render
     const bacaanContainer = document.getElementById('bacaan-list');
-    bacaanContainer.innerHTML = BACAAN_SALAT.map((bacaan) => {
+    bacaanContainer.innerHTML = '<div class="hafalan-container">' + BACAAN_SALAT.map((bacaan) => {
         const itemKey = `bacaan_salat_${bacaan}`;
         const status = progressMap[itemKey] || 'Belum';
-        const colorClass = status === 'Lancar' ? 'status-lancar' : (status === 'Cukup' ? 'status-mengulang' : 'status-belum');
+
+        // Similar logic
+        let statusClass = 'belum';
+        let iconClass = 'fa-hands-praying'; // modern fontawesome might be fa-praying-hands
+        if (status === 'Lancar') {
+            statusClass = 'lancar';
+            iconClass = 'fa-check-circle';
+        } else if (status === 'Cukup') { // Treat 'Cukup' as warning/mengulang level
+            statusClass = 'mengulang';
+        }
 
         return `
-            <div class="hafalan-item">
-                <div class="hafalan-info">
+            <div class="hafalan-card">
+                <div class="hafalan-icon">
+                    <i class="fas ${iconClass}"></i>
+                </div>
+                <div class="hafalan-content">
                     <h4>${bacaan}</h4>
-                    <span class="${colorClass}">${status}</span>
+                    <span class="status-badge ${statusClass}">
+                       ${status}
+                    </span>
                 </div>
             </div>
          `;
-    }).join('');
+    }).join('') + '</div>';
+
+    // IQRA RENDER (Student View)
+    const iqraVol = progressMap['iqra_volume'] || '-';
+    const iqraPage = progressMap['iqra_page'] || '-';
+
+    const iqraVolEl = document.getElementById('iqra-volume');
+    const iqraPageEl = document.getElementById('iqra-page');
+    if (iqraVolEl) iqraVolEl.textContent = iqraVol;
+    if (iqraPageEl) iqraPageEl.textContent = iqraPage;
 }
+
 
 
 // --- TEACHER FEATURES ---
@@ -982,7 +1024,8 @@ function switchTeacherHafalanFilter(filter) {
     document.querySelectorAll('.hafalan-tabs .h-tab').forEach(btn => btn.classList.remove('active'));
     // Simple logic match text
     if (filter === 'juz30') document.querySelector('.hafalan-tabs .h-tab:nth-child(1)').classList.add('active');
-    if (filter === 'bacaan') document.querySelector('.hafalan-tabs .h-tab:nth-child(2)').classList.add('active');
+    if (filter === 'iqra') document.querySelector('.hafalan-tabs .h-tab:nth-child(2)').classList.add('active');
+    if (filter === 'bacaan') document.querySelector('.hafalan-tabs .h-tab:nth-child(3)').classList.add('active');
 
     loadDetailHafalan();
 }
@@ -1000,6 +1043,53 @@ async function loadDetailHafalan() {
     const progressMap = {};
     if (progress) progress.forEach(p => progressMap[`${p.category}_${p.item_name}`] = p.status);
 
+    // SPECIAL HANDLING FOR IQRA
+    if (currentHafalanFilter === 'iqra') {
+        const currentVol = progressMap['iqra_volume'] || '1';
+        const currentPage = progressMap['iqra_page'] || '1';
+
+        // ensure tempIqraVol is synced
+        tempIqraVol = currentVol;
+
+        list.innerHTML = `
+            <div class="card p-4" style="text-align:center;">
+                <h4 style="margin-bottom:15px; color:#4B5563;">Update Pencapaian Iqra'</h4>
+                
+                <div class="form-group mb-4">
+                    <label style="display:block; text-align:left; font-weight:600; margin-bottom:8px;">Jilid Saat Ini</label>
+                    <div style="display:grid; grid-template-columns: repeat(6, 1fr); gap:5px;">
+                        ${[1, 2, 3, 4, 5, 6].map(v => `
+                            <button onclick="updateIqraVolume('${v}')" class="status-btn ${currentVol == v ? 'active' : ''}" style="border:1px solid #E2E8F0; height:40px; font-size:1.1rem;">${v}</button>
+                        `).join('')}
+                    </div>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label style="display:block; text-align:center; font-weight:600; margin-bottom:4px; font-size:0.85rem; color:#4B5563;">Halaman Terakhir</label>
+                    <div style="display:flex; align-items:center; justify-content:center; gap:8px;">
+                         <button onclick="updateIqraPage(${parseInt(currentPage) - 1})" 
+                             style="width:30px; height:30px; border-radius:50%; background:#F3F4F6; border:1px solid #E5E7EB; font-size:0.9rem; color:#6B7280; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all 0.2s;">
+                             <i class="fas fa-minus" style="font-size:0.7rem;"></i>
+                         </button>
+                         
+                         <input type="number" id="input-iqra-page" value="${currentPage}" min="1" onchange="updateIqraPage(this.value)"
+                             style="width:75px; text-align:center; font-weight:800; font-size:1.3rem; border:1px solid #E5E7EB; border-radius:8px; background:white; color:#1F2937; -moz-appearance: textfield; padding:0;">
+                         
+                         <button onclick="updateIqraPage(${parseInt(currentPage) + 1})" 
+                             style="width:30px; height:30px; border-radius:50%; background:#10B981; border:none; font-size:0.9rem; color:white; display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 2px 4px -1px rgba(16, 185, 129, 0.4);">
+                             <i class="fas fa-plus" style="font-size:0.7rem;"></i>
+                         </button>
+                    </div>
+                </div>
+
+                <button onclick="saveIqraProgress()" class="btn-primary full-width" style="padding:8px; font-size:0.85rem;">
+                    <i class="fas fa-save"></i> Simpan Pencapaian
+                </button>
+            </div>
+        `;
+        return;
+    }
+
     // Determine Items List
     let items = [];
     if (currentHafalanFilter === 'juz30') {
@@ -1016,16 +1106,68 @@ async function loadDetailHafalan() {
 
         return `
             <div class="edit-hafalan-item">
-                <span>${item.name}</span>
+                <span class="item-name">${item.name}</span>
                 <div class="edit-controls">
-                    <button class="status-btn btn-belum ${btnClass('Belum')}" onclick="updateStudentHafalan('${item.key}', '${item.name}', 'Belum')">Belum</button>
-                    <button class="status-btn btn-ulang ${btnClass('Mengulang')}" onclick="updateStudentHafalan('${item.key}', '${item.name}', 'Mengulang')">Ulang</button>
-                    <button class="status-btn btn-lancar ${btnClass('Lancar')}" onclick="updateStudentHafalan('${item.key}', '${item.name}', 'Lancar')">Lancar</button>
+                    <button class="status-btn btn-belum ${btnClass('Belum')}" onclick="updateStudentHafalan('${item.key}', '${item.name}', 'Belum')">
+                        <i class="fas fa-times-circle"></i> Belum
+                    </button>
+                    <button class="status-btn btn-ulang ${btnClass('Mengulang')}" onclick="updateStudentHafalan('${item.key}', '${item.name}', 'Mengulang')">
+                        <i class="fas fa-history"></i> Ulang
+                    </button>
+                    <button class="status-btn btn-lancar ${btnClass('Lancar')}" onclick="updateStudentHafalan('${item.key}', '${item.name}', 'Lancar')">
+                        <i class="fas fa-check-circle"></i> Lancar
+                    </button>
                 </div>
             </div>
         `;
     }).join('');
 }
+
+// IQRA UTILS FOR TEACHER
+let tempIqraVol = null;
+function updateIqraVolume(v) {
+    tempIqraVol = v;
+    // Visually update buttons
+    const container = document.getElementById('detail-hafalan-list');
+    container.querySelectorAll('.status-btn').forEach(b => b.classList.remove('active'));
+    // We just clicked one, add active to it. event.target might be the button
+    // But since event is global in inline handler context...
+    // Let's rely on finding by text content if possible or just careful DOM transversal
+    // Simpler: just re-render is wasteful. Let's assume the button passed 'this' but it didn't.
+    // Use event.target
+    if (event && event.target) {
+        event.target.classList.add('active');
+    }
+}
+
+function updateIqraPage(val) {
+    if (val < 1) val = 1;
+    document.getElementById('input-iqra-page').value = val;
+}
+
+async function saveIqraProgress() {
+    const page = document.getElementById('input-iqra-page').value;
+    let vol = tempIqraVol;
+
+    // Safety check if user didn't click any volume button (kept existing)
+    if (!vol) {
+        // This happens if I didn't click volume but clicked save.
+        // tempIqraVol is set in loadDetailHafalan initially
+    }
+
+    if (!vol) vol = "1";
+
+    const updates = [
+        { user_id: currentDetailStudent.id, category: 'iqra', item_name: 'volume', status: vol.toString() },
+        { user_id: currentDetailStudent.id, category: 'iqra', item_name: 'page', status: page.toString() }
+    ];
+
+    const { error } = await supabase.from('hafalan_progress').upsert(updates, { onConflict: 'user_id, category, item_name' });
+
+    if (error) alert('Gagal: ' + error.message);
+    else showToast('Pencapaian Iqra Tersimpan');
+}
+
 
 async function updateStudentHafalan(category, itemName, newStatus) {
     // Optimistic UI could be added but let's just reload for safety or simple CSS toggle.

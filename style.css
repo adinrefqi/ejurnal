@@ -580,44 +580,77 @@ input:checked+.slider:before {
     display: block;
 }
 
-.hafalan-list {
-    background: white;
-    border-radius: var(--border-radius);
-    overflow: hidden;
-}
-
-.hafalan-item {
-    padding: 15px;
-    border-bottom: 1px solid #F3F4F6;
+/* HAFALAN STYLING (New) */
+.hafalan-container {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    gap: 12px;
+    padding-bottom: 20px;
+}
+
+.hafalan-card {
+    background: white;
+    border-radius: 16px;
+    padding: 16px;
+    display: flex;
     align-items: center;
+    gap: 15px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+    transition: transform 0.2s;
+    border: 1px solid #F1F5F9;
 }
 
-.hafalan-info h4 {
+.hafalan-card:active {
+    transform: scale(0.98);
+}
+
+.hafalan-icon {
+    width: 45px;
+    height: 45px;
+    background: #F0FDF4;
+    color: #10B981;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+
+.hafalan-content {
+    flex: 1;
+}
+
+.hafalan-content h4 {
     font-size: 1rem;
+    color: var(--text-main);
     margin-bottom: 4px;
+    font-weight: 600;
 }
 
-.hafalan-info span {
-    font-size: 0.8rem;
-    padding: 4px 8px;
-    border-radius: 4px;
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.75rem;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-weight: 500;
 }
 
-.status-belum {
-    background: #FEE2E2;
-    color: #B91C1C;
+.status-badge.lancar {
+    background: #DCFCE7;
+    color: #166534;
 }
 
-.status-mengulang {
+.status-badge.mengulang {
     background: #FEF3C7;
-    color: #D97706;
+    color: #92400E;
 }
 
-.status-lancar {
-    background: #D1FAE5;
-    color: #059669;
+.status-badge.belum {
+    background: #F3F4F6;
+    color: #6B7280;
 }
 
 /* TEACHER DASHBOARD SPECIFIC */
@@ -818,50 +851,78 @@ input:checked+.slider:before {
     display: flex;
     justify-content: center;
 }
-}
 
 /* EDITABLE HAFALAN */
 .edit-hafalan-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px;
     background: white;
-    border-bottom: 1px solid #F1F5F9;
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 8px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    border: 1px solid #F1F5F9;
+}
+
+.edit-hafalan-item .item-name {
+    font-weight: 600;
+    color: var(--text-main);
+    font-size: 0.95rem;
+    padding-left: 4px;
 }
 
 .edit-controls {
-    display: flex;
-    gap: 5px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+    background: #F8FAFC;
+    padding: 4px;
+    border-radius: 10px;
+    border: 1px solid #F1F5F9;
 }
 
 .status-btn {
-    border: 1px solid #E5E7EB;
-    background: white;
-    padding: 5px 10px;
-    border-radius: 6px;
-    font-size: 0.75rem;
+    border: none;
+    background: transparent;
+    padding: 8px 0;
+    border-radius: 8px;
+    font-size: 0.8rem;
     cursor: pointer;
+    color: #64748B;
+    transition: all 0.2s;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.status-btn i {
+    font-size: 0.9em;
+}
+
+.status-btn:hover {
+    background: rgba(0, 0, 0, 0.03);
+    color: var(--text-main);
 }
 
 .status-btn.active {
+    background: white;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     font-weight: 600;
-    border-color: transparent;
 }
 
 .status-btn.btn-belum.active {
-    background: #FEE2E2;
-    color: #B91C1C;
+    color: #EF4444;
 }
 
 .status-btn.btn-ulang.active {
-    background: #FEF3C7;
-    color: #D97706;
+    color: #F59E0B;
 }
 
 .status-btn.btn-lancar.active {
-    background: #D1FAE5;
-    color: #059669;
+    color: #10B981;
 }
 
 

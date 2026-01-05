@@ -781,46 +781,40 @@ async function loadDetailSholat() {
         return;
     }
 
-    let html = `
-        <div class="table-responsive">
-            <table class="sholat-table">
-                <thead>
-                    <tr>
-                        <th style="min-width:100px;">Tanggal</th>
-                        <th>Subuh</th>
-                        <th>Zuhur</th>
-                        <th>Asar</th>
-                        <th>Magrib</th>
-                        <th>Isya</th>
-                        <th>Validasi</th>
-                    </tr>
-                </thead>
-                <tbody>
-    `;
-
+    let html = '<div class="sholat-log-list">';
     logs.forEach(log => {
         const d = new Date(log.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
-        const check = (val) => val ? '<i class="fas fa-check-circle check-ok"></i>' : '<i class="fas fa-minus-circle check-no"></i>';
-        const validIcon = log.parent_valid ? '<span style="color:#10B981; font-size:0.8rem;"><i class="fas fa-check"></i> OK</span>' : '<span style="color:#E5E7EB;">-</span>';
+        // Initial of prayer names
+        const prayers = [
+            { k: 'S', v: log.subuh },
+            { k: 'Z', v: log.zuhur },
+            { k: 'A', v: log.asar },
+            { k: 'M', v: log.magrib },
+            { k: 'I', v: log.isya }
+        ];
+
+        const prayersHtml = prayers.map(p => `
+            <div class="p-dot ${p.v ? 'done' : ''}" title="${p.k === 'S' ? 'Subuh' : p.k === 'Z' ? 'Zuhur' : p.k === 'A' ? 'Asar' : p.k === 'M' ? 'Magrib' : 'Isya'}">${p.k}</div>
+        `).join('');
+
+        const validHtml = log.parent_valid
+            ? '<i class="fas fa-check-circle" style="color:#10B981; font-size:1.1rem;"></i>'
+            : '<i class="fas fa-times-circle" style="color:#E5E7EB; font-size:1.1rem;"></i>';
 
         html += `
-            <tr>
-                <td>${d}</td>
-                <td>${check(log.subuh)}</td>
-                <td>${check(log.zuhur)}</td>
-                <td>${check(log.asar)}</td>
-                <td>${check(log.magrib)}</td>
-                <td>${check(log.isya)}</td>
-                <td>${validIcon}</td>
-            </tr>
+            <div class="sholat-log-card">
+                <div class="log-date">${d}</div>
+                <div class="log-prayers">
+                    ${prayersHtml}
+                </div>
+                <div class="log-valid">
+                    ${validHtml}
+                </div>
+            </div>
         `;
     });
 
-    html += `
-                </tbody>
-            </table>
-        </div>
-    `;
+    html += `</div>`;
     list.innerHTML = html;
 }
 

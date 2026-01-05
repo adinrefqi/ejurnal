@@ -765,63 +765,59 @@ input:checked+.slider:before {
 }
 
 /* TABLE FOR SHOLAT */
-/* TABLE FOR SHOLAT */
-.table-responsive {
-    width: 100%;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    margin-top: 10px;
-    border-radius: 8px;
-    border: 1px solid #F1F5F9;
+/* SHOLAT LOG LIST (Mobile Friendly) */
+.sholat-log-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
-.sholat-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.85rem;
-    white-space: nowrap;
-    /* Prevent wrapping */
+.sholat-log-card {
+    background: #F8FAFC;
+    border-radius: 12px;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
-.sholat-table th,
-.sholat-table td {
-    padding: 12px 10px;
-    text-align: center;
-    border-bottom: 1px solid #F1F5F9;
-}
-
-.sholat-table th {
-    color: var(--text-muted);
+.log-date {
     font-weight: 600;
-    background-color: #F8FAFC;
+    font-size: 0.85rem;
+    color: var(--text-main);
+    width: 45px;
+    line-height: 1.2;
+    text-align: center;
 }
 
-/* Sticky first column (Date) */
-.sholat-table td:first-child,
-.sholat-table th:first-child {
-    position: sticky;
-    left: 0;
-    background-color: white;
-    /* overlay scrolling content */
-    z-index: 10;
-    border-right: 2px solid #F1F5F9;
-    text-align: left;
-    padding-left: 15px;
+.log-prayers {
+    display: flex;
+    gap: 5px;
 }
 
-.sholat-table th:first-child {
-    background-color: #F8FAFC;
-    z-index: 20;
+.p-dot {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: #E2E8F0;
+    color: #9CA3AF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.65rem;
+    font-weight: bold;
 }
 
-.sholat-table .check-ok {
-    color: var(--primary);
-    font-size: 1.1rem;
+.p-dot.done {
+    background: #10B981;
+    color: white;
 }
 
-.sholat-table .check-no {
-    color: #E5E7EB;
-    font-size: 1.1rem;
+.log-valid {
+    width: 30px;
+    display: flex;
+    justify-content: center;
+}
 }
 
 /* EDITABLE HAFALAN */

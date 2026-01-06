@@ -1052,38 +1052,44 @@ async function loadDetailHafalan() {
         tempIqraVol = currentVol;
 
         list.innerHTML = `
-            <div class="card p-4" style="text-align:center;">
-                <h4 style="margin-bottom:15px; color:#4B5563;">Update Pencapaian Iqra'</h4>
+            <div class="card" style="padding:15px; display:flex; flex-direction:column; gap:15px; text-align:center;">
+                <h4 style="margin:0; color:#4B5563; font-size:1rem;">Update Pencapaian Iqra'</h4>
                 
-                <div class="form-group mb-4">
-                    <label style="display:block; text-align:left; font-weight:600; margin-bottom:8px;">Jilid Saat Ini</label>
-                    <div style="display:grid; grid-template-columns: repeat(6, 1fr); gap:5px;">
-                        ${[1, 2, 3, 4, 5, 6].map(v => `
-                            <button onclick="updateIqraVolume('${v}')" class="status-btn ${currentVol == v ? 'active' : ''}" style="border:1px solid #E2E8F0; height:40px; font-size:1.1rem;">${v}</button>
-                        `).join('')}
+                <div style="display:flex; flex-wrap:wrap; justify-content:center; gap:15px; align-items:flex-end;">
+                    
+                    <!-- Jilid Selection -->
+                    <div class="form-group" style="margin:0;">
+                        <label style="display:block; text-align:center; font-weight:600; margin-bottom:5px; font-size:0.75rem; color:#6B7280;">Jilid</label>
+                        <div style="display:flex; gap:3px;">
+                            ${[1, 2, 3, 4, 5, 6].map(v => `
+                                <button onclick="updateIqraVolume('${v}')" class="status-btn ${currentVol == v ? 'active' : ''}" style="border:1px solid #E2E8F0; width:30px; height:35px; font-size:0.9rem; padding:0;">${v}</button>
+                            `).join('')}
+                        </div>
                     </div>
+
+                    <!-- Page Input -->
+                    <div class="form-group" style="margin:0;">
+                        <label style="display:block; text-align:center; font-weight:600; margin-bottom:5px; font-size:0.75rem; color:#6B7280;">Hal. Terakhir</label>
+                        <div style="display:flex; align-items:center; justify-content:center; gap:5px;">
+                             <button onclick="updateIqraPage(${parseInt(currentPage) - 1})" 
+                                 style="width:28px; height:28px; border-radius:50%; background:#F3F4F6; border:1px solid #E5E7EB; font-size:0.8rem; color:#6B7280; display:flex; align-items:center; justify-content:center; cursor:pointer;">
+                                 <i class="fas fa-minus" style="font-size:0.6rem;"></i>
+                             </button>
+                             
+                             <input type="number" id="input-iqra-page" value="${currentPage}" min="1" onchange="updateIqraPage(this.value)"
+                                 style="width:50px; text-align:center; font-weight:700; font-size:1.1rem; border:1px solid #E5E7EB; border-radius:6px; background:white; color:#1F2937; -moz-appearance: textfield; padding:2px 0;">
+                             
+                             <button onclick="updateIqraPage(${parseInt(currentPage) + 1})" 
+                                 style="width:28px; height:28px; border-radius:50%; background:#10B981; border:none; font-size:0.8rem; color:white; display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 2px 4px -1px rgba(16, 185, 129, 0.4);">
+                                 <i class="fas fa-plus" style="font-size:0.6rem;"></i>
+                             </button>
+                        </div>
+                    </div>
+
                 </div>
 
-                <div class="form-group mb-3">
-                    <label style="display:block; text-align:center; font-weight:600; margin-bottom:4px; font-size:0.85rem; color:#4B5563;">Halaman Terakhir</label>
-                    <div style="display:flex; align-items:center; justify-content:center; gap:8px;">
-                         <button onclick="updateIqraPage(${parseInt(currentPage) - 1})" 
-                             style="width:30px; height:30px; border-radius:50%; background:#F3F4F6; border:1px solid #E5E7EB; font-size:0.9rem; color:#6B7280; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all 0.2s;">
-                             <i class="fas fa-minus" style="font-size:0.7rem;"></i>
-                         </button>
-                         
-                         <input type="number" id="input-iqra-page" value="${currentPage}" min="1" onchange="updateIqraPage(this.value)"
-                             style="width:75px; text-align:center; font-weight:800; font-size:1.3rem; border:1px solid #E5E7EB; border-radius:8px; background:white; color:#1F2937; -moz-appearance: textfield; padding:0;">
-                         
-                         <button onclick="updateIqraPage(${parseInt(currentPage) + 1})" 
-                             style="width:30px; height:30px; border-radius:50%; background:#10B981; border:none; font-size:0.9rem; color:white; display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 2px 4px -1px rgba(16, 185, 129, 0.4);">
-                             <i class="fas fa-plus" style="font-size:0.7rem;"></i>
-                         </button>
-                    </div>
-                </div>
-
-                <button onclick="saveIqraProgress()" class="btn-primary full-width" style="padding:8px; font-size:0.85rem;">
-                    <i class="fas fa-save"></i> Simpan Pencapaian
+                <button onclick="saveIqraProgress()" class="btn-primary full-width" style="padding:10px; font-size:0.9rem;">
+                    <i class="fas fa-save"></i> Simpan
                 </button>
             </div>
         `;

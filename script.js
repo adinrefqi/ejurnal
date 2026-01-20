@@ -978,14 +978,12 @@ async function loadDetailSholat() {
 
         html += `
             <div class="sholat-log-card">
-                <div class="log-main-row">
-                    <div class="log-date">${d}</div>
-                    <div class="log-prayers">
-                        ${prayersHtml}
-                    </div>
-                    <div class="log-valid">
-                        ${validHtml}
-                    </div>
+                <div class="log-header">
+                    <span class="log-date">${d}</span>
+                    <span class="log-valid">${validHtml}</span>
+                </div>
+                <div class="log-prayers">
+                    ${prayersHtml}
                 </div>
                 <div class="log-actions-row">
                     <button class="action-btn-full edit" onclick="editSholatLog(${log.id}, '${log.date}', ${log.subuh}, ${log.zuhur}, ${log.asar}, ${log.magrib}, ${log.isya})">

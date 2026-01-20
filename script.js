@@ -985,6 +985,14 @@ async function loadDetailSholat() {
                 <div class="log-valid">
                     ${validHtml}
                 </div>
+                <div class="log-actions">
+                    <button class="action-btn edit" onclick="editSholatLog(${log.id}, '${log.date}', ${log.subuh}, ${log.zuhur}, ${log.asar}, ${log.magrib}, ${log.isya})" title="Edit">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="action-btn delete" onclick="deleteSholatLog(${log.id})" title="Hapus">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
             </div>
         `;
     });
@@ -1010,13 +1018,23 @@ async function loadDetailTadarus() {
 
     list.innerHTML = logs.map(item => `
         <div class="card mb-3 p-3">
-            <div style="display:flex; justify-content:space-between;">
-                <div>
+            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                <div style="flex:1;">
                     <strong>QS. ${item.surah}</strong> <small>(${item.ayat || '-'})</small>
+                    <div>
+                        <small class="text-muted"><i class="far fa-calendar"></i> ${new Date(item.date).toLocaleDateString('id-ID')}</small>
+                        <small class="text-muted" style="margin-left:10px;"><i class="far fa-clock"></i> ${item.duration} Mnt</small>
+                    </div>
                 </div>
-                <div class="text-muted text-sm">${item.duration} Mnt</div>
+                <div class="log-actions" style="display:flex; gap:5px;">
+                    <button class="action-btn edit" onclick="editTadarusLog(${item.id}, '${item.date}', '${item.surah}', '${item.ayat || ''}', ${item.duration})" title="Edit">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="action-btn delete" onclick="deleteTadarusLog(${item.id})" title="Hapus">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
             </div>
-            <small class="text-muted"><i class="far fa-calendar"></i> ${new Date(item.date).toLocaleDateString('id-ID')}</small>
         </div>
     `).join('');
 }
@@ -1252,4 +1270,183 @@ function loadTheme() {
             icon.classList.add('fa-sun');
         }
     }
+}
+
+// ========== EDIT & DELETE FUNCTIONS (GURU/ADMIN ONLY) ==========
+
+// --- SHOLAT ---
+function editSholatLog(id, date, subuh, zuhur, asar, magrib, isya) {
+    const formattedDate = new Date(date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+
+    const modalHtml = `
+        <div id="edit-modal" class="edit-modal-overlay" onclick="closeEditModal(event)">
+            <div class="edit-modal-content" onclick="event.stopPropagation()">
+                <div class="edit-modal-header">
+                    <h3><i class="fas fa-edit"></i> Edit Jurnal Salat</h3>
+                    <button class="close-modal-btn" onclick="closeEditModal()"><i class="fas fa-times"></i></button>
+                </div>
+                <p class="edit-date-label"><i class="far fa-calendar"></i> ${formattedDate}</p>
+                <form id="edit-sholat-form" class="edit-form">
+                    <div class="edit-checkbox-group">
+                        <label class="edit-checkbox">
+                            <input type="checkbox" name="subuh" ${subuh ? 'checked' : ''}>
+                            <span>Subuh</span>
+                        </label>
+                        <label class="edit-checkbox">
+                            <input type="checkbox" name="zuhur" ${zuhur ? 'checked' : ''}>
+                            <span>Zuhur</span>
+                        </label>
+                        <label class="edit-checkbox">
+                            <input type="checkbox" name="asar" ${asar ? 'checked' : ''}>
+                            <span>Asar</span>
+                        </label>
+                        <label class="edit-checkbox">
+                            <input type="checkbox" name="magrib" ${magrib ? 'checked' : ''}>
+                            <span>Magrib</span>
+                        </label>
+                        <label class="edit-checkbox">
+                            <input type="checkbox" name="isya" ${isya ? 'checked' : ''}>
+                            <span>Isya</span>
+                        </label>
+                    </div>
+                    <div class="edit-modal-actions">
+                        <button type="button" class="btn-cancel" onclick="closeEditModal()">Batal</button>
+                        <button type="button" class="btn-primary" onclick="saveSholatEdit(${id})">
+                            <i class="fas fa-save"></i> Simpan
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    `;
+
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+}
+
+async function saveSholatEdit(id) {
+    const form = document.getElementById('edit-sholat-form');
+    const updateData = {
+        subuh: form.querySelector('input[name="subuh"]').checked,
+        zuhur: form.querySelector('input[name="zuhur"]').checked,
+        asar: form.querySelector('input[name="asar"]').checked,
+        magrib: form.querySelector('input[name="magrib"]').checked,
+        isya: form.querySelector('input[name="isya"]').checked
+    };
+
+    const { error } = await supabase
+        .from('journal_sholat')
+        .update(updateData)
+        .eq('id', id);
+
+    if (error) {
+        alert('Gagal menyimpan: ' + error.message);
+    } else {
+        showToast('Jurnal Salat Diperbarui');
+        closeEditModal();
+        loadDetailSholat();
+    }
+}
+
+async function deleteSholatLog(id) {
+    if (!confirm('Yakin ingin menghapus data salat ini?')) return;
+
+    const { error } = await supabase
+        .from('journal_sholat')
+        .delete()
+        .eq('id', id);
+
+    if (error) {
+        alert('Gagal menghapus: ' + error.message);
+    } else {
+        showToast('Data Salat Dihapus');
+        loadDetailSholat();
+    }
+}
+
+// --- TADARUS ---
+function editTadarusLog(id, date, surah, ayat, duration) {
+    const formattedDate = new Date(date).toISOString().split('T')[0];
+
+    const modalHtml = `
+        <div id="edit-modal" class="edit-modal-overlay" onclick="closeEditModal(event)">
+            <div class="edit-modal-content" onclick="event.stopPropagation()">
+                <div class="edit-modal-header">
+                    <h3><i class="fas fa-edit"></i> Edit Jurnal Tadarus</h3>
+                    <button class="close-modal-btn" onclick="closeEditModal()"><i class="fas fa-times"></i></button>
+                </div>
+                <form id="edit-tadarus-form" class="edit-form">
+                    <div class="form-group">
+                        <label>Tanggal</label>
+                        <input type="date" name="date" value="${formattedDate}" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Nama Surah</label>
+                        <input type="text" name="surah" value="${surah}" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Ayat</label>
+                        <input type="text" name="ayat" value="${ayat}" placeholder="Contoh: 1-10">
+                    </div>
+                    <div class="form-group">
+                        <label>Durasi (menit)</label>
+                        <input type="number" name="duration" value="${duration}" min="1" required>
+                    </div>
+                    <div class="edit-modal-actions">
+                        <button type="button" class="btn-cancel" onclick="closeEditModal()">Batal</button>
+                        <button type="button" class="btn-primary" onclick="saveTadarusEdit(${id})">
+                            <i class="fas fa-save"></i> Simpan
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    `;
+
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+}
+
+async function saveTadarusEdit(id) {
+    const form = document.getElementById('edit-tadarus-form');
+    const updateData = {
+        date: form.querySelector('input[name="date"]').value,
+        surah: form.querySelector('input[name="surah"]').value,
+        ayat: form.querySelector('input[name="ayat"]').value,
+        duration: parseInt(form.querySelector('input[name="duration"]').value)
+    };
+
+    const { error } = await supabase
+        .from('journal_tadarus')
+        .update(updateData)
+        .eq('id', id);
+
+    if (error) {
+        alert('Gagal menyimpan: ' + error.message);
+    } else {
+        showToast('Jurnal Tadarus Diperbarui');
+        closeEditModal();
+        loadDetailTadarus();
+    }
+}
+
+async function deleteTadarusLog(id) {
+    if (!confirm('Yakin ingin menghapus data tadarus ini?')) return;
+
+    const { error } = await supabase
+        .from('journal_tadarus')
+        .delete()
+        .eq('id', id);
+
+    if (error) {
+        alert('Gagal menghapus: ' + error.message);
+    } else {
+        showToast('Data Tadarus Dihapus');
+        loadDetailTadarus();
+    }
+}
+
+// --- MODAL UTILS ---
+function closeEditModal(event) {
+    if (event && event.target.id !== 'edit-modal') return;
+    const modal = document.getElementById('edit-modal');
+    if (modal) modal.remove();
 }

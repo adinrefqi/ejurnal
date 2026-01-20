@@ -566,7 +566,7 @@ async function saveSholat(checkbox) {
         checkbox.checked = !isChecked;
     } else {
         showToast('Tersimpan');
-        updateDashboardSholatCount(); // Assuming this function exists elsewhere or needs re-adding if logic removed
+        loadStudentDashboard(); // Refresh dashboard stats after saving
     }
 }
 

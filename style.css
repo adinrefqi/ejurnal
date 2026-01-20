@@ -75,8 +75,9 @@ body {
 main {
     flex: 1;
     overflow-y: auto;
-    padding-bottom: 80px;
-    /* Space for bottom nav */
+    padding-bottom: 100px;
+    /* Space for bottom nav + safe area */
+    padding-bottom: calc(100px + env(safe-area-inset-bottom, 0px));
 }
 
 /* HEADER */
@@ -707,15 +708,19 @@ input:checked+.slider:before {
 
 /* BOTTOM NAV */
 .bottom-nav {
-    position: absolute;
+    position: fixed;
     bottom: 0;
     left: 0;
+    right: 0;
     width: 100%;
+    max-width: 480px;
+    margin: 0 auto;
     background: white;
     display: flex;
     justify-content: space-around;
-    padding: 12px 10px 25px 10px;
-    /* Extra padding for bottom safe area */
+    padding: 12px 10px 20px 10px;
+    /* Support for iOS safe area */
+    padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px));
     border-top-left-radius: 20px;
     border-top-right-radius: 20px;
     box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.05);

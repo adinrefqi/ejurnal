@@ -52,3 +52,13 @@ insert into users (id, name, role, class_name, pin) values
 ('67890', 'Siti Aminah', 'student', '7A', '123'),
 ('G001', 'Ust. Abdullah', 'teacher', null, 'admin')
 on conflict (id) do nothing;
+
+-- 6. PENTING: Permission/Akses
+-- Karena kita menggunakan custom login (bukan Supabase Auth email),
+-- kita perlu mematikan RLS (Row Level Security) agar API bisa baca/tulis.
+-- Atau Anda bisa membuat Policy khusus, tapi ini cara tercepat untuk prototype.
+
+alter table users disable row level security;
+alter table journal_sholat disable row level security;
+alter table journal_tadarus disable row level security;
+alter table hafalan_progress disable row level security;

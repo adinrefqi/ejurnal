@@ -978,19 +978,21 @@ async function loadDetailSholat() {
 
         html += `
             <div class="sholat-log-card">
-                <div class="log-date">${d}</div>
-                <div class="log-prayers">
-                    ${prayersHtml}
+                <div class="log-main-row">
+                    <div class="log-date">${d}</div>
+                    <div class="log-prayers">
+                        ${prayersHtml}
+                    </div>
+                    <div class="log-valid">
+                        ${validHtml}
+                    </div>
                 </div>
-                <div class="log-valid">
-                    ${validHtml}
-                </div>
-                <div class="log-actions">
-                    <button class="action-btn edit" onclick="editSholatLog(${log.id}, '${log.date}', ${log.subuh}, ${log.zuhur}, ${log.asar}, ${log.magrib}, ${log.isya})" title="Edit">
-                        <i class="fas fa-edit"></i>
+                <div class="log-actions-row">
+                    <button class="action-btn-full edit" onclick="editSholatLog(${log.id}, '${log.date}', ${log.subuh}, ${log.zuhur}, ${log.asar}, ${log.magrib}, ${log.isya})">
+                        <i class="fas fa-edit"></i> Edit
                     </button>
-                    <button class="action-btn delete" onclick="deleteSholatLog(${log.id})" title="Hapus">
-                        <i class="fas fa-trash"></i>
+                    <button class="action-btn-full delete" onclick="deleteSholatLog(${log.id})">
+                        <i class="fas fa-trash"></i> Hapus
                     </button>
                 </div>
             </div>
@@ -1017,23 +1019,24 @@ async function loadDetailTadarus() {
     }
 
     list.innerHTML = logs.map(item => `
-        <div class="card mb-3 p-3">
-            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-                <div style="flex:1;">
+        <div class="tadarus-log-card">
+            <div class="tadarus-content">
+                <div class="tadarus-title">
                     <strong>QS. ${item.surah}</strong> <small>(${item.ayat || '-'})</small>
-                    <div>
-                        <small class="text-muted"><i class="far fa-calendar"></i> ${new Date(item.date).toLocaleDateString('id-ID')}</small>
-                        <small class="text-muted" style="margin-left:10px;"><i class="far fa-clock"></i> ${item.duration} Mnt</small>
-                    </div>
                 </div>
-                <div class="log-actions" style="display:flex; gap:5px;">
-                    <button class="action-btn edit" onclick="editTadarusLog(${item.id}, '${item.date}', '${item.surah}', '${item.ayat || ''}', ${item.duration})" title="Edit">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="action-btn delete" onclick="deleteTadarusLog(${item.id})" title="Hapus">
-                        <i class="fas fa-trash"></i>
-                    </button>
+                <div class="tadarus-meta">
+                    <span><i class="far fa-calendar"></i> ${new Date(item.date).toLocaleDateString('id-ID')}</span>
+                    <span><i class="far fa-clock"></i> ${item.duration} Mnt</span>
+                    ${item.parent_valid ? '<span class="validated"><i class="fas fa-check-circle"></i> Valid</span>' : ''}
                 </div>
+            </div>
+            <div class="log-actions-row">
+                <button class="action-btn-full edit" onclick="editTadarusLog(${item.id}, '${item.date}', '${item.surah}', '${item.ayat || ''}', ${item.duration})">
+                    <i class="fas fa-edit"></i> Edit
+                </button>
+                <button class="action-btn-full delete" onclick="deleteTadarusLog(${item.id})">
+                    <i class="fas fa-trash"></i> Hapus
+                </button>
             </div>
         </div>
     `).join('');

@@ -1494,18 +1494,204 @@ body.dark-theme .btn-cancel:hover {
     background: #475569;
 }
 
-/* Update sholat-log-card to accommodate action buttons */
+/* ========== SHOLAT LOG CARD (Stacked Layout) ========== */
 .sholat-log-card {
+    background: white;
+    border-radius: 12px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+}
+
+.log-main-row {
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 12px;
-    background: white;
-    border-radius: 10px;
-    margin-bottom: 8px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    padding: 12px 15px;
 }
 
-body.dark-theme .sholat-log-card {
+.log-date {
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--text-main);
+    min-width: 45px;
+}
+
+.log-prayers {
+    display: flex;
+    gap: 4px;
+    flex: 1;
+}
+
+.p-dot {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: #E5E7EB;
+    color: #9CA3AF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+.p-dot.done {
+    background: var(--primary);
+    color: white;
+}
+
+.log-valid {
+    font-size: 1.1rem;
+}
+
+/* Action buttons row - full width at bottom */
+.log-actions-row {
+    display: flex;
+    gap: 0;
+    border-top: 1px solid #F1F5F9;
+}
+
+.action-btn-full {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    background: #F8FAFC;
+    color: #6B7280;
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+}
+
+.action-btn-full:first-child {
+    border-right: 1px solid #F1F5F9;
+}
+
+.action-btn-full.edit {
+    color: #3B82F6;
+}
+
+.action-btn-full.edit:hover,
+.action-btn-full.edit:active {
+    background: #EFF6FF;
+    color: #2563EB;
+}
+
+.action-btn-full.delete {
+    color: #EF4444;
+}
+
+.action-btn-full.delete:hover,
+.action-btn-full.delete:active {
+    background: #FEF2F2;
+    color: #DC2626;
+}
+
+/* ========== TADARUS LOG CARD ========== */
+.tadarus-log-card {
+    background: white;
+    border-radius: 12px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+}
+
+.tadarus-content {
+    padding: 12px 15px;
+}
+
+.tadarus-title {
+    font-size: 0.95rem;
+    color: var(--text-main);
+    margin-bottom: 6px;
+}
+
+.tadarus-title strong {
+    color: var(--primary);
+}
+
+.tadarus-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.tadarus-meta span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.tadarus-meta .validated {
+    color: var(--primary);
+    font-weight: 500;
+}
+
+/* ========== DARK THEME FOR LOG CARDS ========== */
+body.dark-theme .sholat-log-card,
+body.dark-theme .tadarus-log-card {
     background: var(--card-bg);
+}
+
+body.dark-theme .log-main-row {
+    border-bottom-color: #334155;
+}
+
+body.dark-theme .log-date {
+    color: var(--text-main);
+}
+
+body.dark-theme .p-dot {
+    background: #334155;
+    color: #64748B;
+}
+
+body.dark-theme .p-dot.done {
+    background: var(--primary);
+    color: white;
+}
+
+body.dark-theme .log-actions-row {
+    border-top-color: #334155;
+}
+
+body.dark-theme .action-btn-full {
+    background: #1E293B;
+    color: #94A3B8;
+    border-color: #334155;
+}
+
+body.dark-theme .action-btn-full:first-child {
+    border-right-color: #334155;
+}
+
+body.dark-theme .action-btn-full.edit {
+    color: #60A5FA;
+}
+
+body.dark-theme .action-btn-full.edit:hover {
+    background: #1E3A5F;
+}
+
+body.dark-theme .action-btn-full.delete {
+    color: #F87171;
+}
+
+body.dark-theme .action-btn-full.delete:hover {
+    background: #4C1D1D;
+}
+
+body.dark-theme .tadarus-title {
+    color: var(--text-main);
+}
+
+body.dark-theme .tadarus-meta {
+    color: var(--text-muted);
 }

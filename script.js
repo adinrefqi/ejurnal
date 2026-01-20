@@ -978,19 +978,17 @@ async function loadDetailSholat() {
 
         html += `
             <div class="sholat-log-card">
-                <div class="log-header">
-                    <span class="log-date">${d}</span>
-                    <span class="log-valid">${validHtml}</span>
-                </div>
+                <div class="log-date">${d}</div>
                 <div class="log-prayers">
                     ${prayersHtml}
                 </div>
-                <div class="log-actions-row">
-                    <button class="action-btn-full edit" onclick="editSholatLog(${log.id}, '${log.date}', ${log.subuh}, ${log.zuhur}, ${log.asar}, ${log.magrib}, ${log.isya})">
-                        <i class="fas fa-edit"></i> Edit
+                <div class="log-valid">${validHtml}</div>
+                <div class="log-actions-vertical">
+                    <button class="action-btn-icon edit" onclick="editSholatLog(${log.id}, '${log.date}', ${log.subuh}, ${log.zuhur}, ${log.asar}, ${log.magrib}, ${log.isya})" title="Edit">
+                        <i class="fas fa-edit"></i>
                     </button>
-                    <button class="action-btn-full delete" onclick="deleteSholatLog(${log.id})">
-                        <i class="fas fa-trash"></i> Hapus
+                    <button class="action-btn-icon delete" onclick="deleteSholatLog(${log.id})" title="Hapus">
+                        <i class="fas fa-trash"></i>
                     </button>
                 </div>
             </div>
@@ -1025,15 +1023,15 @@ async function loadDetailTadarus() {
                 <div class="tadarus-meta">
                     <span><i class="far fa-calendar"></i> ${new Date(item.date).toLocaleDateString('id-ID')}</span>
                     <span><i class="far fa-clock"></i> ${item.duration} Mnt</span>
-                    ${item.parent_valid ? '<span class="validated"><i class="fas fa-check-circle"></i> Valid</span>' : ''}
+                    ${item.parent_valid ? '<span class="validated"><i class="fas fa-check-circle"></i></span>' : ''}
                 </div>
             </div>
-            <div class="log-actions-row">
-                <button class="action-btn-full edit" onclick="editTadarusLog(${item.id}, '${item.date}', '${item.surah}', '${item.ayat || ''}', ${item.duration})">
-                    <i class="fas fa-edit"></i> Edit
+            <div class="log-actions-vertical">
+                <button class="action-btn-icon edit" onclick="editTadarusLog(${item.id}, '${item.date}', '${item.surah}', '${item.ayat || ''}', ${item.duration})" title="Edit">
+                    <i class="fas fa-edit"></i>
                 </button>
-                <button class="action-btn-full delete" onclick="deleteTadarusLog(${item.id})">
-                    <i class="fas fa-trash"></i> Hapus
+                <button class="action-btn-icon delete" onclick="deleteTadarusLog(${item.id})" title="Hapus">
+                    <i class="fas fa-trash"></i>
                 </button>
             </div>
         </div>

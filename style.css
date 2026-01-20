@@ -1494,59 +1494,94 @@ body.dark-theme .btn-cancel:hover {
     background: #475569;
 }
 
-/* ========== SHOLAT LOG CARD (Fully Stacked Layout) ========== */
+/* ========== SHOLAT LOG CARD (Horizontal with Vertical Actions) ========== */
 .sholat-log-card {
     background: white;
     border-radius: 12px;
-    margin-bottom: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    overflow: hidden;
-}
-
-/* Header: Date on left, Validation on right */
-.log-header {
+    margin-bottom: 10px;
+    padding: 10px 12px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 10px 15px;
-    background: #F8FAFC;
-    border-bottom: 1px solid #F1F5F9;
+    gap: 10px;
 }
 
 .log-date {
-    font-weight: 700;
-    font-size: 0.9rem;
+    font-weight: 600;
+    font-size: 0.8rem;
     color: var(--primary);
+    min-width: 40px;
+    text-align: center;
 }
 
-.log-valid {
-    font-size: 1rem;
-}
-
-/* Prayer dots - centered, wrapped */
 .log-prayers {
     display: flex;
-    justify-content: center;
-    gap: 8px;
-    padding: 15px;
-    flex-wrap: wrap;
+    gap: 4px;
+    flex: 1;
 }
 
 .p-dot {
-    width: 36px;
-    height: 36px;
+    width: 28px;
+    height: 28px;
     border-radius: 50%;
     background: #E5E7EB;
     color: #9CA3AF;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.8rem;
+    font-size: 0.7rem;
     font-weight: 600;
 }
 
 .p-dot.done {
     background: var(--primary);
+    color: white;
+}
+
+.log-valid {
+    font-size: 1rem;
+    margin-right: 5px;
+}
+
+/* Vertical action buttons (icons only) */
+.log-actions-vertical {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.action-btn-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    transition: all 0.2s ease;
+}
+
+.action-btn-icon.edit {
+    background: #EFF6FF;
+    color: #3B82F6;
+}
+
+.action-btn-icon.edit:hover,
+.action-btn-icon.edit:active {
+    background: #3B82F6;
+    color: white;
+}
+
+.action-btn-icon.delete {
+    background: #FEF2F2;
+    color: #EF4444;
+}
+
+.action-btn-icon.delete:hover,
+.action-btn-icon.delete:active {
+    background: #EF4444;
     color: white;
 }
 
@@ -1602,18 +1637,21 @@ body.dark-theme .btn-cancel:hover {
     background: white;
     border-radius: 12px;
     margin-bottom: 10px;
+    padding: 10px 12px;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
-    overflow: hidden;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 .tadarus-content {
-    padding: 12px 15px;
+    flex: 1;
 }
 
 .tadarus-title {
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     color: var(--text-main);
-    margin-bottom: 6px;
+    margin-bottom: 4px;
 }
 
 .tadarus-title strong {
@@ -1623,31 +1661,25 @@ body.dark-theme .btn-cancel:hover {
 .tadarus-meta {
     display: flex;
     flex-wrap: wrap;
-    gap: 12px;
-    font-size: 0.75rem;
+    gap: 10px;
+    font-size: 0.7rem;
     color: var(--text-muted);
 }
 
 .tadarus-meta span {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 3px;
 }
 
 .tadarus-meta .validated {
     color: var(--primary);
-    font-weight: 500;
 }
 
 /* ========== DARK THEME FOR LOG CARDS ========== */
 body.dark-theme .sholat-log-card,
 body.dark-theme .tadarus-log-card {
     background: var(--card-bg);
-}
-
-body.dark-theme .log-header {
-    background: #0F172A;
-    border-bottom-color: #334155;
 }
 
 body.dark-theme .log-date {
@@ -1664,34 +1696,24 @@ body.dark-theme .p-dot.done {
     color: white;
 }
 
-body.dark-theme .log-actions-row {
-    border-top-color: #334155;
-}
-
-body.dark-theme .action-btn-full {
-    background: #1E293B;
-    color: #94A3B8;
-    border-color: #334155;
-}
-
-body.dark-theme .action-btn-full:first-child {
-    border-right-color: #334155;
-}
-
-body.dark-theme .action-btn-full.edit {
+body.dark-theme .action-btn-icon.edit {
+    background: #1E3A5F;
     color: #60A5FA;
 }
 
-body.dark-theme .action-btn-full.edit:hover {
-    background: #1E3A5F;
+body.dark-theme .action-btn-icon.edit:hover {
+    background: #3B82F6;
+    color: white;
 }
 
-body.dark-theme .action-btn-full.delete {
+body.dark-theme .action-btn-icon.delete {
+    background: #4C1D1D;
     color: #F87171;
 }
 
-body.dark-theme .action-btn-full.delete:hover {
-    background: #4C1D1D;
+body.dark-theme .action-btn-icon.delete:hover {
+    background: #EF4444;
+    color: white;
 }
 
 body.dark-theme .tadarus-title {

@@ -61,6 +61,9 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function initApp() {
+    // Load saved theme
+    loadTheme();
+
     // Cek session lokal (agar tidak login ulang setiap refresh)
     const session = localStorage.getItem('ejurnal_session');
     if (session) {
@@ -1206,4 +1209,47 @@ function showToast(msg) {
     }, 2000);
 }
 
+// ========== THEME TOGGLE ==========
+function toggleTheme() {
+    const body = document.body;
+    const icon = document.getElementById('theme-icon');
 
+    if (body.classList.contains('dark-theme')) {
+        // Switch to light mode
+        body.classList.remove('dark-theme');
+        if (icon) {
+            icon.classList.remove('fa-moon');
+            icon.classList.add('fa-sun');
+        }
+        localStorage.setItem('ejurnal_theme', 'light');
+        showToast('Tema Terang Aktif');
+    } else {
+        // Switch to dark mode
+        body.classList.add('dark-theme');
+        if (icon) {
+            icon.classList.remove('fa-sun');
+            icon.classList.add('fa-moon');
+        }
+        localStorage.setItem('ejurnal_theme', 'dark');
+        showToast('Tema Gelap Aktif');
+    }
+}
+
+function loadTheme() {
+    const savedTheme = localStorage.getItem('ejurnal_theme');
+    const icon = document.getElementById('theme-icon');
+
+    if (savedTheme === 'dark') {
+        document.body.classList.add('dark-theme');
+        if (icon) {
+            icon.classList.remove('fa-sun');
+            icon.classList.add('fa-moon');
+        }
+    } else {
+        document.body.classList.remove('dark-theme');
+        if (icon) {
+            icon.classList.remove('fa-moon');
+            icon.classList.add('fa-sun');
+        }
+    }
+}

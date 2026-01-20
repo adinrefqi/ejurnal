@@ -982,3 +982,222 @@ canvas.signature-pad {
     background: white;
     padding: 2px;
 }
+
+/* ========== THEME TOGGLE ========== */
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.theme-toggle-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    color: white;
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.theme-toggle-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: rotate(20deg);
+}
+
+.theme-toggle-btn:active {
+    transform: scale(0.9);
+}
+
+/* ========== DARK THEME ========== */
+body.dark-theme {
+    --bg-color: #0F172A;
+    --card-bg: #1E293B;
+    --text-main: #F1F5F9;
+    --text-muted: #94A3B8;
+    --primary-light: #064E3B;
+    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+}
+
+body.dark-theme #app-layout,
+body.dark-theme #login-view {
+    background-color: var(--bg-color);
+}
+
+body.dark-theme .login-container {
+    background-color: #1E293B;
+}
+
+body.dark-theme .login-card {
+    background: #0F172A;
+    border: 1px solid #334155;
+}
+
+body.dark-theme .login-tabs {
+    background: #0F172A;
+}
+
+body.dark-theme .tab-btn {
+    color: var(--text-muted);
+}
+
+body.dark-theme .tab-btn.active {
+    background: #334155;
+    color: var(--primary);
+}
+
+body.dark-theme .input-group input {
+    background: #0F172A;
+    border-color: #334155;
+    color: var(--text-main);
+}
+
+body.dark-theme .input-group input::placeholder {
+    color: #64748B;
+}
+
+body.dark-theme .card,
+body.dark-theme .menu-item,
+body.dark-theme .form-container,
+body.dark-theme .checklist-form,
+body.dark-theme .hafalan-card,
+body.dark-theme .stat-card,
+body.dark-theme .student-list-item {
+    background: var(--card-bg);
+    border-color: #334155;
+}
+
+body.dark-theme .card.highlight {
+    border-color: var(--primary);
+}
+
+body.dark-theme .card-info h2,
+body.dark-theme .section-title h3,
+body.dark-theme .prayer-name,
+body.dark-theme .hafalan-content h4,
+body.dark-theme .stat-card h3 {
+    color: var(--text-main);
+}
+
+body.dark-theme .card-info .label,
+body.dark-theme .prayer-time,
+body.dark-theme .text-muted {
+    color: var(--text-muted);
+}
+
+body.dark-theme .quote-card {
+    background: #064E3B;
+    border-left-color: var(--primary);
+    color: #A7F3D0;
+}
+
+body.dark-theme .checklist-item {
+    border-bottom-color: #334155;
+}
+
+body.dark-theme .slider {
+    background-color: #475569;
+}
+
+body.dark-theme .bottom-nav {
+    background: #1E293B;
+    border-top: 1px solid #334155;
+}
+
+body.dark-theme .nav-item {
+    color: #64748B;
+}
+
+body.dark-theme .nav-item.active {
+    color: var(--primary);
+}
+
+body.dark-theme .back-btn,
+body.dark-theme .date-display {
+    background: var(--card-bg);
+    color: var(--text-main);
+}
+
+body.dark-theme .hafalan-tabs {
+    background: var(--card-bg);
+}
+
+body.dark-theme .h-tab {
+    color: var(--text-muted);
+}
+
+body.dark-theme .h-tab.active {
+    background: var(--primary-light);
+    color: var(--primary);
+}
+
+body.dark-theme .form-group input,
+body.dark-theme .class-selector select {
+    background: #0F172A;
+    border-color: #334155;
+    color: var(--text-main);
+}
+
+body.dark-theme .radio-chip {
+    background: #0F172A;
+    border-color: #334155;
+    color: var(--text-muted);
+}
+
+body.dark-theme .hidden-radio:checked+.radio-chip {
+    background: var(--primary-light);
+    color: var(--primary);
+    border-color: var(--primary);
+}
+
+body.dark-theme .signature-pad-container {
+    background: var(--card-bg);
+}
+
+body.dark-theme .signature-pad {
+    background: #0F172A;
+    border-color: #334155;
+}
+
+body.dark-theme .profile-menu .list-item {
+    background: var(--card-bg);
+    border-color: #334155;
+    color: var(--text-main);
+}
+
+body.dark-theme .toast {
+    background: #334155;
+}
+
+body.dark-theme .status-badge.belum {
+    background: #334155;
+    color: #94A3B8;
+}
+
+body.dark-theme .edit-hafalan-item {
+    background: var(--card-bg);
+    border-color: #334155;
+}
+
+body.dark-theme .sholat-log-card {
+    background: var(--card-bg);
+}
+
+/* Smooth transitions for theme change */
+body,
+.card,
+.menu-item,
+.bottom-nav,
+.login-card,
+.form-container,
+.checklist-form,
+.hafalan-card,
+input,
+select {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}

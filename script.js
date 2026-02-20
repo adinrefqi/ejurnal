@@ -255,6 +255,9 @@ function navigateTo(viewId) {
     } else if (viewId === 'hafalan') {
         document.getElementById('hafalan-view').classList.remove('hidden');
         loadHafalanData();
+    } else if (viewId === 'ramadhan') {
+        document.getElementById('ramadhan-view').classList.remove('hidden');
+        loadRamadhanData();
     } else if (viewId === 'profile') {
         document.getElementById('profile-view').classList.remove('hidden');
     }
@@ -766,6 +769,62 @@ async function loadHafalanData() {
     if (iqraPageEl) iqraPageEl.textContent = iqraPage;
 }
 
+
+// --- RAMADHAN LOGIC ---
+async function loadRamadhanData() {
+    if (!supabase) return;
+
+    // Reset inputs
+    document.querySelectorAll('input[name="ramadhan"]').forEach(el => {
+        el.checked = false;
+        el.disabled = false;
+    });
+
+    // UI Date
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    const dateDisplay = document.getElementById('ramadhan-date-display');
+    if (dateDisplay) dateDisplay.textContent = new Date().toLocaleDateString('id-ID', options);
+
+    const { data, error } = await supabase
+        .from('journal_ramadhan')
+        .select('*')
+        .eq('user_id', currentUser.id)
+        .eq('date', currentDate)
+        .single();
+
+    if (error) {
+        if (error.code !== 'PGRST116') console.error(error);
+        return;
+    }
+
+    if (data) {
+        if (data.puasa) document.querySelector('input[name="ramadhan"][value="puasa"]').checked = true;
+        if (data.tarawih) document.querySelector('input[name="ramadhan"][value="tarawih"]').checked = true;
+    }
+}
+
+async function saveRamadhan(checkbox) {
+    if (!supabase) return;
+
+    const field = checkbox.value; // 'puasa' or 'tarawih'
+    const isChecked = checkbox.checked;
+
+    const updateData = {};
+    updateData[field] = isChecked;
+    updateData['user_id'] = currentUser.id;
+    updateData['date'] = currentDate;
+
+    const { error } = await supabase
+        .from('journal_ramadhan')
+        .upsert(updateData, { onConflict: 'user_id, date' });
+
+    if (error) {
+        alert('Gagal menyimpan: ' + error.message);
+        checkbox.checked = !isChecked;
+    } else {
+        showToast('Tersimpan');
+    }
+}
 
 
 // --- TEACHER FEATURES ---

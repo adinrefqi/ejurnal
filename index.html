@@ -163,6 +163,11 @@
                         <div class="icon-box purple"><i class="fas fa-brain"></i></div>
                         <span>Hafalan</span>
                     </div>
+                    <div class="menu-item" onclick="navigateTo('ramadhan')">
+                        <div class="icon-box" style="background: #FEF3C7; color: #D97706;"><i class="fas fa-moon"></i>
+                        </div>
+                        <span>Ramadhan</span>
+                    </div>
                     <div class="menu-item" onclick="navigateTo('history')">
                         <div class="icon-box orange"><i class="fas fa-history"></i></div>
                         <span>Riwayat</span>
@@ -444,6 +449,49 @@
                     </div>
                 </div>
 
+            </section>
+
+            <!-- Ramadhan View -->
+            <section id="ramadhan-view" class="content-view hidden">
+                <div class="page-header">
+                    <button class="back-btn" onclick="navigateTo('dashboard')"><i
+                            class="fas fa-arrow-left"></i></button>
+                    <h2>Menu Ramadhan</h2>
+                </div>
+
+                <div class="date-display">
+                    <i class="far fa-calendar-alt"></i>
+                    <span id="ramadhan-date-display">Minggu, 4 Januari 2026</span>
+                </div>
+
+                <div class="checklist-form">
+                    <div class="checklist-item">
+                        <div class="check-label">
+                            <span class="prayer-name">Puasa</span>
+                            <span class="prayer-time">Ceklis jika berpuasa hari ini</span>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" name="ramadhan" value="puasa" onchange="saveRamadhan(this)">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="checklist-item">
+                        <div class="check-label">
+                            <span class="prayer-name">Salat Tarawih</span>
+                            <span class="prayer-time">Ceklis jika melaksanakan tarawih</span>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" name="ramadhan" value="tarawih" onchange="saveRamadhan(this)">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="quote-card mt-4">
+                    <p>"Hai orang-orang yang beriman, diwajibkan atas kamu berpuasa sebagaimana diwajibkan atas
+                        orang-orang sebelum kamu agar kamu bertakwa."</p>
+                    <small>QS. Al-Baqarah: 183</small>
+                </div>
             </section>
 
             <!-- Profile/Settings View -->

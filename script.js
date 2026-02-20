@@ -1048,11 +1048,11 @@ function switchDetailTab(tabId) {
     // 1. Update Tab Buttons State
     container.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
     if (tabId === 'd-sholat') container.querySelector('.tab-btn:nth-child(1)').classList.add('active');
-    if (tabId === 'd-tadarus') container.querySelector('.tab-btn:nth-child(2)').classList.add('active');
-    if (tabId === 'd-hafalan') container.querySelector('.tab-btn:nth-child(3)').classList.add('active');
+    if (tabId === 'd-ramadhan') container.querySelector('.tab-btn:nth-child(2)').classList.add('active');
+    if (tabId === 'd-tadarus') container.querySelector('.tab-btn:nth-child(3)').classList.add('active');
+    if (tabId === 'd-hafalan') container.querySelector('.tab-btn:nth-child(4)').classList.add('active');
 
     // 2. Update Content Visibility
-    // We must handle both 'hidden' utility and 'active' class used in CSS
     container.querySelectorAll('.detail-content').forEach(c => {
         c.classList.remove('active');
         c.classList.add('hidden');
@@ -1066,8 +1066,49 @@ function switchDetailTab(tabId) {
 
     // 3. Load Data
     if (tabId === 'd-sholat') loadDetailSholat();
+    if (tabId === 'd-ramadhan') loadDetailRamadhan();
     if (tabId === 'd-tadarus') loadDetailTadarus();
     if (tabId === 'd-hafalan') loadDetailHafalan();
+}
+
+async function loadDetailRamadhan() {
+    const list = document.getElementById('detail-ramadhan-list');
+    list.innerHTML = 'Loading...';
+
+    const { data: logs } = await supabase
+        .from('journal_ramadhan')
+        .select('*')
+        .eq('user_id', currentDetailStudent.id)
+        .order('date', { ascending: false });
+
+    if (!logs || logs.length === 0) {
+        list.innerHTML = '<p class="text-muted text-center mt-4">Belum ada data Ramadhan.</p>';
+        return;
+    }
+
+    list.innerHTML = logs.map(item => `
+        <div class="card mb-2 p-3" style="border-left: 3px solid ${item.parent_valid ? '#10B981' : '#E5E7EB'}">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                    <strong>${new Date(item.date).toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long' })}</strong>
+                    <div class="mt-2" style="display:flex; gap:10px;">
+                        <span class="status-badge ${item.puasa ? 'lancar' : 'belum'}">
+                            <i class="fas ${item.puasa ? 'fa-check' : 'fa-times'}"></i> Puasa
+                        </span>
+                        <span class="status-badge ${item.tarawih ? 'lancar' : 'belum'}">
+                            <i class="fas ${item.tarawih ? 'fa-check' : 'fa-times'}"></i> Tarawih
+                        </span>
+                    </div>
+                </div>
+                ${item.parent_signature ? `
+                    <div style="text-align:right;">
+                        <img src="${item.parent_signature}" style="height:40px; border:1px solid #eee; border-radius:4px;" alt="Paraf">
+                        <div style="font-size:0.6rem; color:#10B981;">Valid</div>
+                    </div>
+                ` : '<div style="font-size:0.7rem; color:#9CA3AF;">Belum TTD</div>'}
+            </div>
+        </div>
+    `).join('');
 }
 
 async function loadDetailSholat() {

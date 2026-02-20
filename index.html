@@ -459,9 +459,11 @@
                     <h2>Menu Ramadhan</h2>
                 </div>
 
-                <div class="date-display">
+                <div class="date-display"
+                    style="width: 100%; justify-content: center; background: #FEF3C7; color: #92400E;">
                     <i class="far fa-calendar-alt"></i>
-                    <span id="ramadhan-date-display">Minggu, 4 Januari 2026</span>
+                    <input type="date" id="ramadhan-date" onchange="changeRamadhanDate(this)"
+                        style="border: none; background: transparent; font-family: inherit; color: inherit; font-weight: 600; outline: none;">
                 </div>
 
                 <div class="checklist-form">
@@ -484,6 +486,25 @@
                             <input type="checkbox" name="ramadhan" value="tarawih" onchange="saveRamadhan(this)">
                             <span class="slider"></span>
                         </label>
+                    </div>
+                    <div class="checklist-item">
+                        <div class="check-label">
+                            <span class="prayer-name">Paraf Orang Tua</span>
+                            <span class="prayer-time">Validasi Harian</span>
+                        </div>
+                        <div id="ramadhan-valid-indicator" style="font-size: 0.8rem; color: #999;">Belum TTD</div>
+                    </div>
+
+                    <!-- Signature Pad -->
+                    <div class="signature-pad-container">
+                        <label>Tanda Tangan Orang Tua</label>
+                        <canvas id="sig-canvas-ramadhan" class="signature-pad"></canvas>
+                        <div class="signature-actions">
+                            <button type="button" class="btn-clear" onclick="clearSignature('ramadhan')">Hapus /
+                                Ulangi</button>
+                        </div>
+                        <button type="button" onclick="saveRamadhanSignature()" class="btn-primary full-width"
+                            style="margin-top:10px; font-size:0.9rem;">Simpan Validasi & Tanda Tangan</button>
                     </div>
                 </div>
 

@@ -350,11 +350,12 @@ async function calculateMonthlyStats() {
 // --- SIGNATURE PAD UTILS ---
 const signatures = {
     sholat: { canvas: null, ctx: null, drawing: false, hasData: false },
-    tadarus: { canvas: null, ctx: null, drawing: false, hasData: false }
+    tadarus: { canvas: null, ctx: null, drawing: false, hasData: false },
+    ramadhan: { canvas: null, ctx: null, drawing: false, hasData: false }
 };
 
 function initSignaturePads() {
-    ['sholat', 'tadarus'].forEach(id => {
+    ['sholat', 'tadarus', 'ramadhan'].forEach(id => {
         const canvas = document.getElementById(`sig-canvas-${id}`);
         if (!canvas) return;
 
@@ -771,6 +772,15 @@ async function loadHafalanData() {
 
 
 // --- RAMADHAN LOGIC ---
+let currentRamadhanDate = new Date().toISOString().split('T')[0];
+
+function changeRamadhanDate(input) {
+    if (input.value) {
+        currentRamadhanDate = input.value;
+        loadRamadhanData();
+    }
+}
+
 async function loadRamadhanData() {
     if (!supabase) return;
 
@@ -778,28 +788,52 @@ async function loadRamadhanData() {
     document.querySelectorAll('input[name="ramadhan"]').forEach(el => {
         el.checked = false;
         el.disabled = false;
+        // Don't disable toggle switch wrapper if we disable input, but input disabled is enough
     });
 
-    // UI Date
-    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    const dateDisplay = document.getElementById('ramadhan-date-display');
-    if (dateDisplay) dateDisplay.textContent = new Date().toLocaleDateString('id-ID', options);
+    // Set date input value
+    const dateInput = document.getElementById('ramadhan-date');
+    if (dateInput) {
+        dateInput.value = currentRamadhanDate;
+    }
+
+    // Clear signature
+    clearSignature('ramadhan');
+
+    // Init pads
+    initSignaturePads();
 
     const { data, error } = await supabase
         .from('journal_ramadhan')
         .select('*')
         .eq('user_id', currentUser.id)
-        .eq('date', currentDate)
+        .eq('date', currentRamadhanDate)
         .single();
 
     if (error) {
         if (error.code !== 'PGRST116') console.error(error);
+
+        // Reset valid indicator
+        const statusEl = document.getElementById('ramadhan-valid-indicator');
+        if (statusEl) statusEl.textContent = 'Belum TTD';
         return;
     }
 
     if (data) {
         if (data.puasa) document.querySelector('input[name="ramadhan"][value="puasa"]').checked = true;
         if (data.tarawih) document.querySelector('input[name="ramadhan"][value="tarawih"]').checked = true;
+
+        const statusEl = document.getElementById('ramadhan-valid-indicator');
+        if (statusEl) {
+            if (data.parent_valid) {
+                statusEl.innerHTML = '<span style="color:#10B981; font-weight:bold;"><i class="fas fa-check-circle"></i> Sudah Valid</span>';
+            } else {
+                statusEl.textContent = 'Belum TTD';
+            }
+        }
+    } else {
+        const statusEl = document.getElementById('ramadhan-valid-indicator');
+        if (statusEl) statusEl.textContent = 'Belum TTD';
     }
 }
 
@@ -812,7 +846,7 @@ async function saveRamadhan(checkbox) {
     const updateData = {};
     updateData[field] = isChecked;
     updateData['user_id'] = currentUser.id;
-    updateData['date'] = currentDate;
+    updateData['date'] = currentRamadhanDate;
 
     const { error } = await supabase
         .from('journal_ramadhan')
@@ -823,6 +857,44 @@ async function saveRamadhan(checkbox) {
         checkbox.checked = !isChecked;
     } else {
         showToast('Tersimpan');
+    }
+}
+
+async function saveRamadhanSignature() {
+    if (!supabase) return;
+
+    const s = signatures['ramadhan'];
+    if (!s.hasData) {
+        alert('Silakan tanda tangan orang tua terlebih dahulu.');
+        return;
+    }
+
+    const dataUrl = s.canvas.toDataURL('image/png');
+
+    const updateData = {
+        user_id: currentUser.id,
+        date: currentRamadhanDate,
+        parent_valid: true,
+        parent_signature: dataUrl
+    };
+
+    const btn = document.querySelector('button[onclick="saveRamadhanSignature()"]');
+    const originalText = btn.textContent;
+    btn.textContent = 'Menyimpan...';
+    btn.disabled = true;
+
+    const { error } = await supabase
+        .from('journal_ramadhan')
+        .upsert(updateData, { onConflict: 'user_id, date' });
+
+    btn.textContent = originalText;
+    btn.disabled = false;
+
+    if (error) {
+        alert('Gagal menyimpan: ' + error.message);
+    } else {
+        showToast('Validasi Orang Tua Tersimpan!');
+        loadRamadhanData();
     }
 }
 
